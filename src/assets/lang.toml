@@ -17,6 +17,7 @@ chapter = "Chapter"
 part = "Part"
 catalog-card = "Work identification card"
 catalog-card-guide = "The identification card is prepared by the author.\nGuidelines at:\n"
+bibliography = "Bibliography"
 
 [lang.pt]
 abstract = "Resumo"

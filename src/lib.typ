@@ -1,10 +1,10 @@
 // Article package
 
-#import "@preview/linguify:0.4.2": linguify, set-database
-#import "@preview/icu-datetime:0.2.0" as icu
+#import "@preview/linguify:0.5.0": linguify, set-database
+#import "@preview/icu-datetime:0.2.1" as icu
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/unify:0.7.1" as unify
-#import "@preview/glossarium:0.5.9": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.5.10": make-glossary, register-glossary, print-glossary, gls, glspl
 
 #let author-state = state("author", none)
 #let full-title-state = state("full-title", none)
@@ -15,6 +15,29 @@
 #let summary-end-state = state("summary-end", false)
 
 #let noindent = par.with(first-line-indent: 0pt)
+
+// https://github.com/flaribbit/indenta
+#let fix-indent(it)={
+  let _is_block(e,fn)=fn==heading or (fn==math.equation and e.block) or (fn==raw and e.has("block") and e.block) or fn==figure or fn==block or fn==list.item or fn==enum.item or fn==table or fn==grid or fn==align or (fn==quote and e.has("block") and e.block)
+  // TODO: smallcaps returns styled(...)
+  let _is_inline(e,fn)=fn==text or fn==box or (fn==math.equation and not e.block) or (fn==raw and not (e.has("block") and e.block)) or fn==highlight or fn==overline or fn==smartquote or fn==strike or fn==sub or fn==super or fn==underline or fn==emph or fn==strong or fn==ref or (fn==quote and not (e.has("block") and e.block))
+  let st=2
+  for e in it.children{
+    let fn=e.func()
+    if fn==heading{
+      st=2
+    }else if _is_block(e,fn){
+      st=1
+    }else if st==1{
+      if e==parbreak(){st=2}
+      else if e!=[ ]{st=0}
+    }else if st==2 and not (_is_block(e,fn) or e==[ ] or e==parbreak()){
+      if _is_inline(e,fn){context h(par.first-line-indent.amount)}
+      st=0
+    }
+    e
+  }
+}
 
 #let thesis(
   // content / identity
@@ -43,12 +66,20 @@
   par-margin: 0.75em,
   list-spacing: 1em,
   justify: true,
+  first-line-indent: (amount: 1.2cm, all: true),
 
   body
 ) = {
   show: make-glossary
 
   lang-data-state.update(lang-data)
+
+  let region = none;
+
+  if (type(lang) != str) {
+    region = lang.at(1);
+    lang = lang.at(0);
+  }
 
   // Required arguments
   assert(title != none, message: "Title is required")
@@ -94,12 +125,14 @@
     justify: justify,
     leading: line-space,
     spacing: par-margin,
-    first-line-indent: (amount: 1.2cm, all: true),
+    first-line-indent: first-line-indent,
   )
+  
   set text(
     font: font,
     size: font-size,
     lang: lang,
+    region: region,
   )
 
   set terms(separator: [: ], tight: true)
@@ -150,7 +183,7 @@
     align: left
   )
 
-  show math.equation.where(block: true): set align(center)
+  // show math.equation.where(block: true): set align(center)
   set math.equation(numbering: (..nums) => numbering("(1)", ..nums))
 
   show quote.where(block: true): it => pad(left: 7cm - margin.left, it)
@@ -211,9 +244,25 @@
     }
   )
 
-  set bibliography(style: "associacao-brasileira-de-normas-tecnicas")
+  set bibliography(style: "assets/associacao-brasileira-de-normas-tecnicas.csl");
+  show bibliography: (it) => {
+    pagebreak(weak: true)
+  
+    show outline.entry: it => context link(it.element.location())[
+      #grid(columns: (auto, 1fr, 2.3em),
+        it.prefix() + h(1em),
+        [--] + h(1em) + it.body() + box(width: 1fr, repeat[#sym.space.#sym.space]),
+        align(bottom + right, it.page())
+      )
+    ]
+  
+    set par(spacing: 2em)
 
-  body
+    it
+  }
+
+  // No idea why we need to call it twice, but here we are...
+  fix-indent(fix-indent(body))
 }
 
 #let cover-page(logo, institution) = context page(numbering: none, {
@@ -358,9 +407,15 @@
     upper(linguify("disclaimer", from: lang-data-state.final()))
   )
 
-  let lang = lang
+  let region = none;
+  let lang = lang;
+  
   if lang == none {
-    lang = text.lang
+    lang = text.lang;
+    region = text.region;
+  } else if (type(lang) != str) {
+    region = lang.at(1);
+    lang = lang.at(0);
   }
   
   [#place, #icu.fmt(date, locale: lang, length: "long")]
@@ -380,8 +435,19 @@
   lang: none,
   body
 ) = context {
+  let region = none;
+  let lang = lang;
+  
+  if (lang != none and type(lang) != str) {
+    region = lang.at(1);
+    lang = lang.at(0);
+  }
+  
   show heading: set  align(center)
-  set text(lang: lang)
+  set text(
+    lang: lang,
+    region: region,
+  )
 
   pagebreak(weak: true)
   
@@ -440,14 +506,16 @@
 
   let glossary = ()
 
-  for g in acronyms {
-    // g.insert("group", "acronyms")
-    glossary.push(g)
+  if acronyms != none {
+    for g in acronyms {
+      glossary.push(g)
+    }
   }
 
-  for g in symbols {
-    // g.insert("group", "symbols")
-    glossary.push(g)
+  if symbols != none {
+    for g in symbols {
+      glossary.push(g)
+    }
   }
   
   if glossary.len() > 0 {
@@ -459,7 +527,7 @@
     
     register-glossary(glossary)
 
-    if acronyms.len() > 0 {
+    if acronyms != none and acronyms.len() > 0 {
       pagebreak(weak: true)
       
       heading(
@@ -474,7 +542,7 @@
       print-glossary(acronyms, disable-back-references: true, user-print-title: my-print-title, show-all: show-all)
     }
 
-    if acronyms.len() > 0 {
+    if symbols != none and symbols.len() > 0 {
       pagebreak(weak: true)
       
       heading(
@@ -499,9 +567,7 @@
     let p = lang-data-state.final().at("lang").at(text.lang).at("part")
     
     let annex = annex-start-state.at(loc)
-    let is-part = p in it.prefix().text.trim()
-
-    
+    let is-part = it.prefix() != none and p in it.prefix().text.trim()
 
     let prefix = if is-part {
       it.prefix().text.trim().split().last()
@@ -569,6 +635,21 @@
   ))
 })
 
+// #let bibliography(bibfile) = context {
+//   pagebreak(weak: true)
+  
+//   show outline.entry: it => context link(it.element.location())[
+//     #grid(columns: (auto, 1fr, 2.3em),
+//       it.prefix() + h(1em),
+//       [--] + h(1em) + it.body() + box(width: 1fr, repeat[#sym.space.#sym.space]),
+//       align(bottom + right, it.page())
+//     )
+//   ]
+
+//   set par(spacing: 2em)
+//   std.bibliography(bibfile, style: "assets/associacao-brasileira-de-normas-tecnicas.csl")
+// }
+
 // Captures appendices to feed `article-appendices` state.
 #let appendix(
   title,
@@ -635,8 +716,39 @@
 }
 
 // Shadows the figure command to introduce the `source` argument to it.
+// #let figure(
+//   label: none,
+//   source: none,
+//   alignment: center,
+//   ..figure-arguments
+// ) = {
+//   if source == none {
+//     panic("ABNT figures must have a \"source\" argument")
+//   }
+  
+//   // separate named from positional arguments.
+//   let args-named = figure-arguments.named()
+//   let args-pos = figure-arguments.pos()
+
+//   if args-named.at("caption", default: none) == none {
+//     panic("ABNT figures must have a \"caption\" argument")
+//   }
+
+//   v(1em)
+//   align(alignment)[
+//     #block(breakable: false)[
+//       #std.figure(
+//         ..args-named,
+//         ..args-pos
+//       ) #if label != none {std.label(label)} else []
+//       #align(center)[
+//         #text(size: 1em - 2pt, context [#linguify("source", from: lang-data-state.final()): #source])
+//       ]
+//     ]
+//   ]
+// }
+
 #let figure(
-  label: none,
   source: none,
   alignment: center,
   ..figure-arguments
@@ -644,8 +756,7 @@
   if source == none {
     panic("ABNT figures must have a \"source\" argument")
   }
-  
-  // separate named from positional arguments.
+
   let args-named = figure-arguments.named()
   let args-pos = figure-arguments.pos()
 
@@ -653,16 +764,23 @@
     panic("ABNT figures must have a \"caption\" argument")
   }
 
-  v(1em)
-  align(alignment)[
-    #block(breakable: false)[
-      #std.figure(
-        ..args-named,
-        ..args-pos
-      ) #if label != none {std.label(label)} else []
-      #align(center)[
-        #text(size: 1em - 2pt, context [#linguify("source", from: lang-data-state.final()): #source])
-      ]
-    ]
-  ]
+  let source-line = align(center,
+    text(size: 1em - 2pt,
+      context [#linguify("source", from: lang-data-state.final()): #source]
+    )
+  )
+
+  std.figure(
+    block(breakable: false,
+      align(alignment,
+        stack(
+          dir: ttb,
+          spacing: 0.5em,
+          args-pos.first(),
+          source-line,
+        )
+      )
+    ),
+    ..args-named,
+  )
 }

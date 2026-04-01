@@ -10,7 +10,7 @@
 Create the cover and few following pages, and configure the document, by writing
 
 ```typst
-#import "@preview/ufscholar:0.2.0": *
+#import "@preview/ufscholar:0.2.11": *
 
 #show: thesis.with(
   title: [Title of the dissertation\ Can be broken into two lines],

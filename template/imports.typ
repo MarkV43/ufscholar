@@ -1,1 +1,1 @@
-#import "@local/ufscholar:0.2.0": *
+#import "@local/ufscholar:0.3.0": *

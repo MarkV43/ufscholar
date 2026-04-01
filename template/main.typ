@@ -49,8 +49,9 @@
   author: "Author's complete name",
   address: ([\<City>], [\<State/Province>], [\<Country>]),
   date: datetime.today(),
-  lang: "en",
+  lang: ("en","GB"),
 )
+// #show: fix-indent()
 
 #cover-page(
   image("assets/brasao_UFSC_vertical_sigla.svg", width: 5em)
@@ -105,12 +106,12 @@
   signer: "<Full Name>",
   institution: "<Institution where the Final Year Project was carried out>",
   date: datetime.today(),
-  lang: "en",
+  lang: ("en", "GB"),
 )[
   As representative of the \<PFC institution of execution\> in which the present work was carried out, I declare this document to be exempt from any confidential or sensitive content regarding intellectual property, that may keep it from being published by the Federal University of Santa Catarina (UFSC) to the general public, including its online availability in the Institutional Repository of the University Library (BU). Furthermore, I attest knowledge of the obligation by the author, as a student of UFSC, to deposit this document in the said Institutional Repository, for being it a Final Program Dissertation ("_Trabalho de Conclusão de Curso_"), in accordance with the Resolução Normativa n° 126/2019/CUn.
 ]
 
-#abstract(lang: "en")[
+#abstract(lang: ("en", "GB"))[
   The abstract must succinctly highlight the content of a text. The order and
   extent of the elements depend on the type of abstract (informative or
   indicative) and the treatment each item receives in the original document.
@@ -128,7 +129,7 @@
 ]
 
 // This command could be anywhere alse in the document.
-#abstract(lang: "pt")[
+#abstract(lang: ("pt", "BR"))[
   O resumo deve ressaltar sucintamente o conteúdo de um texto. A ordem e a
   extensão dos elementos dependem do tipo de resumo (informativo ou indicativo)
   e do tratamento que cada item recebe no documento original. Ele deve ser
@@ -154,6 +155,9 @@
 #include "chapters/chapter_2.typ"
 #include "chapters/chapter_3.typ"
 #include "chapters/chapter_4.typ"
+
+#pagebreak(weak: true)
+#bibliography("zotero.bib")
 
 #appendix[Description 1][
   Texts written by the author to complement their argumentation. It must be preceded by the word APPENDIX, identified by consecutive uppercase letters, a dash, and the corresponding title. Double uppercase letters are used when the alphabet letters are exhausted.

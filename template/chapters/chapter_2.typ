@@ -10,15 +10,13 @@ Text must be inserted between sections.
 
 This is the main and most extensive part of the work. It should present the theoretical foundation, methodology, results, and discussion. It is divided into sections and subsections according to NBR 6024 (*NBR6024:2012*).
 
-Regarding its structure and graphic design, it follows the @abnt recommendations for the preparation of academic works, NBR 14724, from 2011 (*NBR14724:2011*).
+Regarding its structure and graphic design, it follows the @abnt recommendations for the preparation of academic works, NBR 14724, from 2011 (*NBR14724:2011*). See @fig:elementos-trabalho.
 
 #figure(
-  label: "fig:elementos-trabalho",
-  source: "Federal University of Paraná (1996)",
-  caption: "Elements of the academic work",
-)[
-  #image("../assets/images/elements-trabalho-academico.png", width: 70%)
-]
+  source: [Federal University of Paraná (1996)],
+  caption: [Elements of the academic work],
+  image("../assets/images/elements-trabalho-academico.png", width: 70%)
+) <fig:elementos-trabalho>
 
 === Text formatting
 
@@ -29,10 +27,9 @@ Regarding the structure of the work, it is recommended that:
 + the preliminary elements must begin on the front side of the sheet, except for the catalog card or work identification card;
 + the textual and post-textual elements must be typed on both sides of the pages when the work is printed. Primary sections should always start on odd-numbered pages when printed. Leave a space between the title of the section/subsection and the text, and between the text and the following subsection title.
 
-Table @tab:formatacao-texto shows the text formatting specifications.
+@tab:formatacao-texto shows the text formatting specifications.
 
 #figure(
-  label: "tab:formatacao-texto",
   caption: [Text formatting.],
   source: [*NBR14724:2011*],
   table(
@@ -67,7 +64,7 @@ Table @tab:formatacao-texto shows the text formatting specifications.
     [Footnotes],
     [They should be typed within the margin, separated by a single space between lines and by a 5 cm line from the left margin. From the second line onward, they must be aligned below the first letter of the first word of the first line.],
   )
-)
+) <tab:formatacao-texto>
 
 ==== Illustrations
 
@@ -83,20 +80,36 @@ Equations and formulas must be highlighted in the text to facilitate reading. To
 
 Examples, @eq:ex1 and @eq:ex2. Note that the `#gls()` command is used to create a hyperlink to the definition of the symbol in the list of symbols. One could also use `@label` to reference them, like this: @circum. The first time a reference to a symbol, acronym, or abbreviation is made, the long mode is automatically used. After that, they are always referenced by their abbreviations: @circum, but you can still use the long version: @circum:long.
 
-$ #gls("circum") = 2 #gls("pi", long: false) #gls("radius", long: false) sqrt(gamma) + 10. $ <eq:ex1>
+#import "@preview/glossarium:0.5.10": *
 
-$ #gls("area", long: false) = #gls("pi", long: false) #gls("radius", long: false)^2. $ <eq:ex2>
+$ #gls("circum") = 2 #gls-short("pi") #gls-short("radius") sqrt(gamma) + 10. $ <eq:ex1>
 
-#noindent[
-  There is no indentation here because the paragraph has not ended; only a new sentence starts after the equation. Equations are part of the text, therefore subject to punctuation (period, comma, etc.).
-]
+$ #gls-short("area") = #gls-short("pi") #gls-short("radius")^2. $ <eq:ex2>
+There is no indentation here because the paragraph has not ended; only a new sentence starts after the equation. Equations are part of the text, therefore subject to punctuation (period, comma, etc.).
+
+In the ABNT standard, the first paragraph *is indented*.
+
+$ E_k = 1/2 m v^2 $
+
+Indented
+
+$ E = m c^2 $
+Not indented
+
+Indented. // TODO For some reason this one is not indented
+
+$ a^2 + b^2 = c^2 $
+Not indented.
+
+$ cos^2 t + sin^2 t = 1 $
+
+Indented
 
 ===== Table example
 
 According to *ibge1993*, a table is a non-discursive form of presenting information, where numbers represent the core information. See @tab:ibge.
 
 #figure(
-  label: "tab:ibge",
   caption: [Average urban concentrations 2010–2011.],
   source: [*ibge2016*],
   table(
@@ -145,4 +158,4 @@ According to *ibge1993*, a table is a non-discursive form of presenting informat
     [654],
     [686]
   ),
-)
+) <tab:ibge>

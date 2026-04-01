@@ -41,9 +41,9 @@ Another option is to present the specific objectives as steps in a work methodol
 
 \
 
-At the end of the introductory chapter, it is customary to describe how the document is structured (the sequence of the following chapters). The suggested structure below is general and does not need to be followed strictly: depending on the area and focus of the work, the number of chapters may vary. The student should consult their advisor at UFSC to define the document’s structure.
+At the end of the introductory chapter, it is customary to describe how the document is structured (the sequence of the following chapters). The suggested structure below is general and does not need to be followed strictly: depending on the area and focus of the work, the number of chapters may vary. The student should consult their advisor at UFSC to define the document’s structure. @fraytag_impacts_2019
 
-Chapter 2 provides a description of the company (institution where the @pfc was carried out) and its processes/products.
+Chapter 2 provides a description of the company (institution where the @pfc was carried out) and its processes/products. @sanders_generalized_1990
 
 Chapter 3 presents the theoretical foundation: theories, models, etc. essential for understanding the proposed solution are discussed.
 
