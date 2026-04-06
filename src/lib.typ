@@ -68,11 +68,10 @@
   list-spacing: 1em,
   justify: true,
   first-line-indent: (amount: 1.2cm, all: false),
+  fix-indent-repeat: 2,
 
   body
 ) = {
-  show: make-glossary
-
   lang-data-state.update(lang-data)
 
   let region = none;
@@ -92,15 +91,6 @@
   }
 
   let font = if use-serif { fonts.serif } else { fonts.sans }
-
-  show math.equation: it => {
-    if use-serif {
-      set text(font: fonts.math-serif)
-    } else {
-      set text(font: fonts.math-sans)
-    }
-    it
-  }
 
   let full-title = if subtitle != none {
     upper(strong(title)) + ":\n" + subtitle
@@ -263,7 +253,24 @@
     it
   }
 
-  fix-indent()(fix-indent()(body))
+  show math.equation: it => {
+    if use-serif {
+      set text(font: fonts.math-serif)
+      it
+    } else {
+      set text(font: fonts.math-sans)
+      it
+    }
+  }
+
+  show: make-glossary
+  let f(x) = x;
+  for i in range(fix-indent-repeat) {
+    f = (x) => fix-indent()(f(x));
+  }
+
+  show: f
+  body
 }
 
 #let cover-page(logo, institution) = context page(numbering: none, {
