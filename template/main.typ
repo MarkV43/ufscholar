@@ -50,8 +50,8 @@
   address: ([\<City>], [\<State/Province>], [\<Country>]),
   date: datetime.today(),
   lang: ("en","GB"),
+  first-line-indent: 1.2cm
 )
-// #show: fix-indent()
 
 #cover-page(
   image("assets/brasao_UFSC_vertical_sigla.svg", width: 5em)

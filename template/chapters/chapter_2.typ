@@ -85,7 +85,7 @@ Examples, @eq:ex1 and @eq:ex2. Note that the `#gls()` command is used to create 
 $ #gls("circum") = 2 #gls-short("pi") #gls-short("radius") sqrt(gamma) + 10. $ <eq:ex1>
 
 $ #gls-short("area") = #gls-short("pi") #gls-short("radius")^2. $ <eq:ex2>
-There is no indentation here because the paragraph has not ended; only a new sentence starts after the equation. Equations are part of the text, therefore subject to punctuation (period, comma, etc.).
+There is no indentation here because the paragraph has not ended; only a new sentence starts after the equation. Equations are part of the text, therefore subject to punctuation (period, comma, etc.). // TODO fix
 
 In the ABNT standard, the first paragraph *is indented*.
 

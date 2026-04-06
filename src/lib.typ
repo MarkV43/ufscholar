@@ -17,7 +17,8 @@
 #let noindent = par.with(first-line-indent: 0pt)
 
 // https://github.com/flaribbit/indenta
-#let fix-indent(it)={
+#let fix-indent(unsafe: false) = {
+  return it=>{
   let _is_block(e,fn)=fn==heading or (fn==math.equation and e.block) or (fn==raw and e.has("block") and e.block) or fn==figure or fn==block or fn==list.item or fn==enum.item or fn==table or fn==grid or fn==align or (fn==quote and e.has("block") and e.block)
   // TODO: smallcaps returns styled(...)
   let _is_inline(e,fn)=fn==text or fn==box or (fn==math.equation and not e.block) or (fn==raw and not (e.has("block") and e.block)) or fn==highlight or fn==overline or fn==smartquote or fn==strike or fn==sub or fn==super or fn==underline or fn==emph or fn==strong or fn==ref or (fn==quote and not (e.has("block") and e.block))
@@ -32,12 +33,12 @@
       if e==parbreak(){st=2}
       else if e!=[ ]{st=0}
     }else if st==2 and not (_is_block(e,fn) or e==[ ] or e==parbreak()){
-      if _is_inline(e,fn){context h(par.first-line-indent.amount)}
+      if unsafe or _is_inline(e,fn){context h(par.first-line-indent.amount)}
       st=0
     }
     e
   }
-}
+}}
 
 #let thesis(
   // content / identity
@@ -66,7 +67,7 @@
   par-margin: 0.75em,
   list-spacing: 1em,
   justify: true,
-  first-line-indent: (amount: 1.2cm, all: true),
+  first-line-indent: (amount: 1.2cm, all: false),
 
   body
 ) = {
@@ -94,10 +95,11 @@
 
   show math.equation: it => {
     if use-serif {
-      text(font: fonts.math-serif, it)
+      set text(font: fonts.math-serif)
     } else {
-      text(font: fonts.math-sans, it)
+      set text(font: fonts.math-sans)
     }
+    it
   }
 
   let full-title = if subtitle != none {
@@ -261,8 +263,7 @@
     it
   }
 
-  // No idea why we need to call it twice, but here we are...
-  fix-indent(fix-indent(body))
+  fix-indent()(fix-indent()(body))
 }
 
 #let cover-page(logo, institution) = context page(numbering: none, {
